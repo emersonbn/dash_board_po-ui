@@ -1,0 +1,46 @@
+<div class="po-row">
+<app-kpi class="po-lg-3" [(loading)]="loadingKpi" [(kpi)]="kpiRecbruto" ></app-kpi>
+<app-kpi class="po-lg-3" [(loading)]="loadingKpi" [(kpi)]="kpiRecliquido" ></app-kpi>
+<app-kpi class="po-lg-3" [(loading)]="loadingKpi" [(kpi)]="kpiRecliquido" ></app-kpi>
+</div>
+<po-button p-label="PO Button" (p-click)="setUpdaChar()"> </po-button>
+<po-widget class="po-lg-4 po-mt-2"  p-height="300" p-title="Total Mês">
+    <!--
+    <highcharts-chart id="chartGauge" [Highcharts]="highcharts" 
+        [options]="gaugeOptions" [(update)]="updataCharts" 
+        [constructorType]="chartConstructor" 
+        [callbackFunction]="chartCallback"  
+        (chartInstance)="logChartInstance($event)"
+    style="width: 100%; height: 290px; display: block;"></highcharts-chart>
+    -->
+    <button (click)='addSerie()'>AddSerie</button>
+    <div [chart]='chart1' style="width: 100%; height: 290px; display: block;">
+    </div>
+ </po-widget>
+ <po-widget class="po-lg-4 po-mt-2"  p-height="300" p-title="Total Mês">
+    <!--
+    <highcharts-chart id="chartGauge" [Highcharts]="highcharts" 
+        [options]="gaugeOptions" [(update)]="updataCharts" 
+        [constructorType]="chartConstructor" 
+        [callbackFunction]="chartCallback"  
+        (chartInstance)="logChartInstance($event)"
+    style="width: 100%; height: 290px; display: block;"></highcharts-chart>
+    -->
+    <button (click)='addSerie()'>AddSerie</button>
+    <div [chart]='chart2' style="width: 100%; height: 290px; display: block;">
+    </div>
+ </po-widget>
+ <po-widget>
+    <highcharts-chart
+    id="chartGauge" 
+    [Highcharts]="Highcharts"
+    [constructorType]="chartConstructor"
+    [options]="chartOptions"
+    [callbackFunction]="chartCallback"
+    [(update)]=updateFromInput
+    [oneToOne]="true"
+     style="width: 100%; height: 400px; display: block;">
+    </highcharts-chart>
+  
+  
+ </po-widget>

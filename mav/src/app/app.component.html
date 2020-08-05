@@ -1,0 +1,23 @@
+<div *ngIf="currentUser; else elseBlock">
+  <po-navbar p-logo="/assets/images/logo.png" >
+  </po-navbar>
+
+  <div class="po-wrapper">
+    <!--<po-menu  p-collapsed p-filter [p-menus]="menus" >-->
+    
+    <po-menu [p-menus]="menus">
+      <ng-template p-menu-header-template>
+        <po-avatar> </po-avatar>
+      </ng-template>
+    </po-menu>
+    <po-page-default>
+      <router-outlet></router-outlet>
+      <!--<router-outlet name="home"></router-outlet>  -->
+    </po-page-default>
+  </div>
+</div>
+<div>
+  <ng-template #elseBlock>
+    <router-outlet></router-outlet>
+  </ng-template>
+</div>
