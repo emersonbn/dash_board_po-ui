@@ -13,10 +13,13 @@ export class ApirestService {
   url = 'http://localhost:3000/'; // api rest fake
 
   kpis: KPI[];
+  kpisResultAno : any[];
   constructor(private httpClient: HttpClient) {
 
     this.kpis = [];
+    this.kpisResultAno = [];
   //    this.loadKpis();
+
   console.log('ApirestService');
   }
 
@@ -25,7 +28,7 @@ export class ApirestService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   }
 
-
+ 
   getKpiGauge(id: string, typeValue: string) {
     if (this.kpis.length == 0) {
       this.loadKpis();
@@ -60,6 +63,38 @@ export class ApirestService {
           data[key].id = key;
           this.kpis.push(data[key]);
         })
+      }
+      ),
+      take(2),
+      catchError(error => {
+        console.log(error);
+        return empty
+      }))
+
+  }
+
+  getResultYear(id:string): Observable<any> {
+    return new Observable<any>((observ) => {
+      if (this.kpisResultAno.length > 0) {
+        observ.next(this.kpisResultAno)
+      } else {
+        this.loadResultYear(id).subscribe(resultYear => {
+          if(typeof(resultYear) != 'undefined')
+          setTimeout(() => {
+            observ.next(this.kpisResultAno);
+          }, 5000)
+            
+        })
+      }
+
+    })
+
+  }
+  loadResultYear(id:string){
+    return this.httpClient.get(this.url + id).pipe(
+      tap((data:any[]) => {
+        console.log('TAP>' + data);
+        this.kpisResultAno.push(data[0]);
       }
       ),
       take(2),

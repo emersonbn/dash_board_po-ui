@@ -10,7 +10,7 @@ import { PoCheckboxGroupOption, PoRadioGroupOption, PoDialogService, PoSelectOpt
 import { optionChartAnoMes } from '../../../../shared/models/chartsconfigs/optionChartAnoMes';
 import { optionChartAnoMes2 } from '../../../../shared/models/chartsconfigs/optionChartAnoMes2';
 import { Chart } from 'angular-highcharts';
-import { KpiComponent } from '../kpi/kpi.component';
+import { PoFieldModule, PoDatepickerComponent } from '@po-ui/ng-components';
 
 import { ApirestService } from '../../../../shared/services/apirest.service';
 
@@ -30,6 +30,7 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
   loadKpis: Promise<boolean>;
   kpi = {} as KPI;
   kpis: any;
+  resultYear: any [];
   loadingKpi : boolean;
   dataInicio: any;
   dataFinal: any;
@@ -40,61 +41,52 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
   //chartGauge = OutChartGaugeComponent;
   gaugerec = [0]
   updateD: boolean = false;
-  gaugeOptions: any = new optionGauge().getOption();
-  gaugeOptions2 = new optionGauge().getOption();
-  gaugeOptions3 = new optionGauge2().getOption();
-  chartAnoMesOptions1 = new optionChartAnoMes().getOption();
+  gaugeOptions:  any = new optionGauge().getOption();
+  gaugeOptions2: any = new optionGauge().getOption();
+  gaugeOptions3: any = new optionGauge2().getOption();
+  chartAnoMesOptions1: any = new optionChartAnoMes().getOption();
   chartAnoMesOptions2 = new optionChartAnoMes().getOption();
   chartAnoMesOptions3 = new optionChartAnoMes2().getOption();
   updataCharts = true;
   chartCallback;
   chartConstructor = "chart";
-  chartGauge1;
-  chartGauge2;
-  chartGauge3;
-  chartAnoMes1;
+  chartGauge1: Chart;
+  chartGauge2: Chart;
+  chartGauge3: Chart;
+  chartAnoMes1: Chart;
   chartAnoMes2;
   chartAnoMes3;
   chart1: Chart;
   chart2: Chart;
+  
   kpiRecbruto: KPI;
   kpiRecliquido: KPI;
+  kpiMCL : KPI;
+  kpiPercMCL : KPI;
 
   title = "app";
-  chart;
+  //chart;
   updateFromInput = false;
   Highcharts = Highcharts;
-  //chartConstructor = "chart";
-  //chartCallback;
-  chartOptions = {
-    series: [
-      {
-        data: [1, 2, 3, 6, 9]
-      }
-    ],
-    exporting: {
-      enabled: true
-    },
-    yAxis: {
-      allowDecimals: false,
-      title: {
-        text: "Data"
-      }
-    }
-  };
-
+  
+ 
   constructor(private apiService: ApirestService) {
     const self = this;
     // saving chart reference using chart callback
     self.chartCallback = chart => {
       //self.chart = chart;
       console.log('chart.renderTo.id >' + chart.renderTo.id);
+      /*
       if (chart.renderTo.id == 'chartGauge') {
         self.chartGauge1 = chart;
       }
       if (chart.renderTo.id == 'chartGauge2') {
         self.chartGauge2 = chart;
       }
+      if (chart.renderTo.id == 'chartGauge3') {
+        self.chartGauge3 = chart;
+      }
+      */
     };
   }
 
@@ -107,49 +99,46 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    //this.loadKpis = false;
     this.loadingKpi = true;
-    //this.kpis = {"Vazio":{"id":"teste","Realizado":0,"Orcado":0,"Real":0,"Variacao":0,"PercRealizado":0,"Label":"Teste"}};
     this.kpiRecbruto  = {"id":" ","Realizado":0,"Orcado":0,"Real":0,"Variacao":0,"PercRealizado":0,"Label":"Teste"};
     this.kpiRecliquido = {"id":" ","Realizado":0,"Orcado":0,"Real":0,"Variacao":0,"PercRealizado":0,"Label":"Teste"};
+    this.kpiMCL = {"id":" ","Realizado":0,"Orcado":0,"Real":0,"Variacao":0,"PercRealizado":0,"Label":"Teste"};
+    this.kpiPercMCL = {"id":" ","Realizado":0,"Orcado":0,"Real":0,"Variacao":0,"PercRealizado":0,"Label":"Teste"};
     this.kpis = [];
-    this.gaugerec = [0];
-    this.chart1 = new Chart({
-      chart: {
-        type: 'line'
-      },
-      title: {
-        text: 'Linechart'
-      },
-      credits: {
-        enabled: false
-      },
-      series: [
-        {
-          type: 'line',
-          name: 'Line 1',
-          data: [1, 2, 3]
-        }
-      ]
-    });
-    this.chart2 = new Chart(this.gaugeOptions);
-    this.chart2.removePoint(0);
+    this.resultYear = [];
+   
+    this.gaugeOptions.title.text ='Receita Bruta';
+    this.gaugeOptions2.title.text ='Receita Líquida';
+    this.gaugeOptions3.title.text ='%Margem Contribuição';
+    this.chartGauge1 = new Chart(this.gaugeOptions);
+    this.chartGauge1.removePoint(1);
+    this.chartGauge2 = new Chart(this.gaugeOptions2);
+    this.chartGauge2.removePoint(1);
+    this.chartGauge3 = new Chart(this.gaugeOptions3);
+    this.chartGauge3.removePoint(1);
+    this.chartAnoMes1 = new Chart(this.chartAnoMesOptions1 );
     // this.chart2.addPoint(this.apiService.getKpiGauge('recbruto','real'));
+    
+    //this.chartGauge1.ref.showLoading();
     this.getKpis();
     //this.loadKpis = true;
   }
 
   // Demonstrate chart instance
+  /*
   logChartInstance(chart: any) {
     console.log('Chart instance: ', chart);
     if (chart.renderTo.id == 'chartGauge') {
       this.chartGauge1 = chart;
+      this.chartGauge1.ref.showLoading();
     }
     if (chart.renderTo.id == 'chartGauge2') {
       this.chartGauge2 = chart;
+      this.chartGauge2.ref.showLoading();
     }
     if (chart.renderTo.id == 'chartGauge3') {
       this.chartGauge3 = chart;
+      this.chartGauge3.ref.showLoading();
     }
 
     if (chart.renderTo.id == 'chartAnoMes') {
@@ -163,72 +152,48 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
     }
 
   }
+  */
   getAnoMes() {
-    this.chartAnoMes1.showLoading();
-    this.chartAnoMes2.showLoading();
-    this.chartAnoMes3.showLoading();
-    let data = {}; //this.apiService.getValuesForSaldo(this.typeAmount);
-    /*
-      this.apiService.getAnoMes().subscribe(
-      (res)=>{
-        //console.log('this.chartEl.nativeElement'+this.chartEl.nativeElement);
-        //this.chartEl.nativeElement.chartOptions.series[0]["data"] = [95];
-        
-        this.jsonObj = res;
-        
-        //this.chartAnoMes1.setData[];
+    //this.chartAnoMes1.showLoading();
+    this.chartAnoMes1.ref.showLoading();
+    //this.chartAnoMes2.showLoading();
+    //this.chartAnoMes3.showLoading();
+    //let data = {}; 
+    //let newOptions = new optionGauge();
+    //newOptions.setTitle('Receita Líquida');
+    //newOptions.setData([90], 0);
+    //this.gaugeOptions2 = newOptions.getOption();
+      if(this.resultYear.length > 0){
+        //this.chartAnoMes1.ref.series[0].update();
+        console.log(this.chartAnoMes1.ref.series[0]);
+        console.log(this.resultYear[0]);
+        //this.chartAnoMes1.ref.series[0].setData(this.resultYear[0]);
+        this.chartAnoMes1.ref.series[0].data[0] = this.resultYear[0][0];
+        this.chartAnoMes1.ref.redraw();
+      }
       
-        for (let idKPI in res) {
-          if(idKPI == 'RecBruto'){
-            this.updateChartYearMonth(idKPI,res,this.chartAnoMes1);
-          }
-          if(idKPI == 'RecLiquida'){
-            this.updateChartYearMonth(idKPI,res,this.chartAnoMes2);
-          }
-          if(idKPI == 'MCL'){
-            this.updateChartYearMonth(idKPI,res,this.chartAnoMes3);
-          }
-  
-        }
-       
-      })
-      */
-    this.chartGauge1.showLoading();
-    setTimeout(() => {
-      this.chartGauge1.hideLoading();
-      //this.chartGauge1.setData();
-      this.chartGauge1.series[0].setData([80])
-      this.chartGauge1.updataCharts = true;
-    }, 2000);
-
-    let newOptions = new optionGauge();
-    //.setTitle('Receita Liquida').getOption();
-    newOptions.setTitle('Receita Líquida');
-    newOptions.setData([90], 0);
-    this.gaugeOptions2 = newOptions.getOption();
-    //this.gaugerec = [90];
-    //this.updateD = true;
-    //this.setUpdaChar(this.gaugerec);
-    //this.setUpdate.emit(this.gaugerec);
+    this.chartAnoMes1.ref.hideLoading();
+    
 
   }
 
   setUpdaChar() {
     const self = this;
-    //this.getAnoMes();
-    self.chart2.ref.showLoading()
-    //self.chartGauge1.showLoading();
+    self.chartGauge1.ref.showLoading();
+    self.chartGauge2.ref.showLoading();
+    self.chartGauge3.ref.showLoading();
+    this.chartAnoMes1.ref.showLoading();
     setTimeout(() => {
-      self.chart2.ref.hideLoading();
-      // this.chartGauge1.hideLoading();
-      //this.chartGauge1.setData();
-      self.chart2.ref.series[0].setData([30]);
-
-      self.chart2.ref.redraw();
+      self.chartGauge1.ref.hideLoading();
+      self.chartGauge2.ref.hideLoading();
+      self.chartGauge3.ref.hideLoading();
+      self.chartGauge1.ref.series[0].setData([this.kpiRecbruto.PercRealizado]);
+      self.chartGauge2.ref.series[0].setData([this.kpiRecliquido.PercRealizado]);
+      self.chartGauge3.ref.series[0].setData([this.kpiPercMCL.Realizado]);
+      self.chartGauge3.ref.series[1].setData([this.kpiPercMCL.PercRealizado]);
+      //self.chartGauge1.ref.redraw();
+      this.chartAnoMes1.ref.hideLoading();
     }, 2000);
-    //console.log(this.apiService.getKpiGauge('Recbruto','Real'));
-
-
   }
 
   updateChartYearMonth(idKPI: string, datas: any, chart: any) {
@@ -240,23 +205,6 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
     chart.hideLoading();
   }
 
-  addSerie() {
-    this.chart1.addSeries({
-      type: 'line',
-      name: 'Line ' + Math.floor(Math.random() * 10),
-      data: [
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10)
-      ]
-    }, true, true);
-  }
 
   getKpis() {
    // this.kpis = this.apiService.loadKpis();
@@ -267,8 +215,18 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
         this.loadingKpi = false;
         this.kpiRecbruto = this.kpis.filter(e => { return e.id == 'Recbruto' })[0];
         this.kpiRecliquido = this.kpis.filter(e => { return e.id == 'RecLiquido' })[0];
+        this.kpiMCL = this.kpis.filter(e => { return e.id == 'MCL' })[0];
+        this.kpiPercMCL = this.kpis.filter(e => { return e.id == 'PercMCL' })[0];
+        this.setUpdaChar();
       }
     });
+
+    this.apiService.getResultYear('RecBruto').subscribe(resultYear=>{
+      if(typeof(resultYear) != 'undefined'){
+          this.resultYear.push(resultYear);
+      }
+      
+    })
     
     
 
