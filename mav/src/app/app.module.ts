@@ -24,6 +24,7 @@ import { registerLocaleData } from '@angular/common';
 import { ChartModule } from 'angular-highcharts';
 import { KpiComponent } from './shared/kpi/kpi.component';
 //import { HighchartsChartModule } from 'highcharts-angular';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 registerLocaleData(localePT, 'pt', localeExtraPT)
 
@@ -50,6 +51,14 @@ registerLocaleData(localePT, 'pt', localeExtraPT)
     ChartModule,
     //HomeModule,
     //HomeRoutingModule,
+    NgxEchartsModule.forRoot({
+      /**
+       * This will import all modules from echarts.
+       * If you only need custom modules,
+       * please refer to [Custom Build] section.
+       */
+      echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
+    }),
     AppRoutingModule,
     //AccountingModule,
     //sAccountingRoutingModule,

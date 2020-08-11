@@ -4,6 +4,9 @@ import { Result } from '../../../../shared/models/chartsconfigs/result';
 import { PoWidgetModule } from '@po-ui/ng-components';
 import { KPI } from '../../../../shared/models/chartsconfigs/kpi';
 import { optionGauge } from '../../../../shared/models/chartsconfigs/optionsGauge';
+
+import { optionGaugeEcharts } from '../../../../shared/models/chartsconfigs/optionsGaugeEcharts';
+
 import { optionGauge2 } from '../../../../shared/models/chartsconfigs/optionsGauge2';
 import { PoCheckboxGroupOption, PoRadioGroupOption, PoDialogService, PoSelectOption, PoProgressModule } from '@po-ui/ng-components';
 
@@ -15,6 +18,9 @@ import { PoFieldModule, PoDatepickerComponent } from '@po-ui/ng-components';
 import { ApirestService } from '../../../../shared/services/apirest.service';
 
 import * as Highcharts from "highcharts";
+
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
 
 @Component({
   selector: 'app-painel1',
@@ -44,9 +50,11 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
   gaugeOptions:  any = new optionGauge().getOption();
   gaugeOptions2: any = new optionGauge().getOption();
   gaugeOptions3: any = new optionGauge2().getOption();
+  gaugeOptionsEcharts: any = new optionGaugeEcharts().getOption();
   chartAnoMesOptions1: any = new optionChartAnoMes().getOption();
   chartAnoMesOptions2 = new optionChartAnoMes().getOption();
   chartAnoMesOptions3 = new optionChartAnoMes2().getOption();
+  
   updataCharts = true;
   chartCallback;
   chartConstructor = "chart";
@@ -118,6 +126,7 @@ export class Painel1Component implements AfterViewInit, OnDestroy, OnInit {
     this.chartGauge3.removePoint(1);
     this.chartAnoMes1 = new Chart(this.chartAnoMesOptions1 );
     // this.chart2.addPoint(this.apiService.getKpiGauge('recbruto','real'));
+    
     
     //this.chartGauge1.ref.showLoading();
     this.getKpis();

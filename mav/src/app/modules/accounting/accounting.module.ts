@@ -13,6 +13,7 @@ import * as more from 'highcharts/highcharts-more.src';
 import * as exporting from 'highcharts/modules/exporting.src';
 import { KpiComponent } from './pages/kpi/kpi.component';
 import { ApirestService } from 'src/app/shared/services/apirest.service';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 
 @NgModule({
@@ -22,6 +23,9 @@ import { ApirestService } from 'src/app/shared/services/apirest.service';
         PoTemplatesModule,
         ChartModule,
         HighchartsChartModule,
+        NgxEchartsModule.forRoot({
+          echarts: () => import('echarts')
+        }),
         AccountingRoutingModule
     ],
     exports:[
